@@ -5,6 +5,7 @@ import connectDB from './config/db.js';
 import connectCloudinary from './config/cloudinary.js';
 import { clerkWebhook } from './controllers/webhooks.js';
 import companyRoutes from './routes/companyRoutes.js';
+import jobRoutes from './routes/jobRoutes.js';
 
 // Initialize express app
 const app = express();
@@ -20,8 +21,8 @@ app.use(express.json());
 // Routes
 app.get('/', (req, res) => res.send("API Working!"));
 app.post('/webhooks',clerkWebhook)
-
 app.use('/api/company',companyRoutes);
+app.use('/api/jobs',jobRoutes);
 
 //Port
 const PORT = process.env.PORT || 5000;
