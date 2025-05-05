@@ -1,7 +1,10 @@
-import React, { useEffect } from 'react'
+import React, { useContext, useEffect } from 'react'
 import Quill from 'quill'
 import 'quill/dist/quill.snow.css' // IMPORTANT: Add this CSS import
 import { JobCategories, JobLocations } from '../assets/assets'
+import axios from 'axios'
+import { AppContext } from '../context/AppContext'
+import { toast } from 'react-toastify'
 
 const AddJob = () => {
     const [title, setTitle] = React.useState('')
@@ -12,6 +15,37 @@ const AddJob = () => {
 
     const editorRef = React.useRef(null)
     const quillRef = React.useRef(null)
+
+    const { backendUrl, companytoken } = useContext(AppContext)
+
+    const onSubmitHandler = async (e) => {
+        e.preventDefault()
+
+        try {
+
+            const description = quillRef.current.root.innerHTML
+
+            const { data } = await axios.post(backendUrl+ 'api/company/post-job',
+                {title, description, location, salary, category, level},
+                {headers: {token:companytoken}}
+            )
+
+            if (data.success){
+                toast.success(data.message)
+                setTitle('')
+                setSalary(0)
+                quillRef.current.root.innerHTML = ""
+                console.log('Job Added Succesfully')
+            }else{
+                toast.error(data.message)
+            }
+
+            
+        } catch (error) {
+            toast.error(error.message)
+        }
+
+    }
 
     useEffect(() => {
         if (editorRef.current && !quillRef.current) {
@@ -39,7 +73,7 @@ const AddJob = () => {
     }, [])
 
     return (
-        <form className='container p-4 flex flex-col w-full items-start gap-3'>
+        <form onSubmit={onSubmitHandler} className='container p-4 flex flex-col w-full items-start gap-3'>
             <div className='w-full'>
                 <p className='mb-2'>Job Title</p>
                 <input 
@@ -111,7 +145,7 @@ const AddJob = () => {
             </div>
             
             <button 
-                type="button" 
+                type="submit" 
                 className='px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700'
             >
                 ADD

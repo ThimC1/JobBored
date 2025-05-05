@@ -11,22 +11,28 @@ import { useContext } from 'react'
 import ViewApplications from './pages/ViewApplications'
 import 'quill/dist/quill.snow.css'
 import ManageJobs from './pages/ManageJobs'
+import { ToastContainer, toast } from 'react-toastify';
 
 const App = () => {
 
-const {showRecruiterLogin} = useContext(AppContext)
+const {showRecruiterLogin, companytoken} = useContext(AppContext)
 
   return (
     <div>
       {showRecruiterLogin && <RecruiterLogin/>}
+      <ToastContainer/>
       <Routes>
           <Route path="/" element={<Home/>} />
           <Route path="/apply-job/:id" element={<ApplyJob/>} />
           <Route path="/applications" element={<Applications/>} />
           <Route path="/dashboard" element={<Dashboared/>}>
+          {companytoken?<>
             <Route path="add-job" element={<AddJob/>} />
             <Route path="manage-job" element={<ManageJobs/>} />
             <Route path="view-applications" element={<ViewApplications/>} />
+          </>: null
+          }
+            
           </Route>
       </Routes>
     </div>

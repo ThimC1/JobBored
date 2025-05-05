@@ -8,39 +8,41 @@ import kConvert from 'k-convert'
 import moment from 'moment'
 import JobCard from '../components/JobCard'
 import Footer from '../components/Footer'
+import axios from 'axios'
+import { toast } from 'react-toastify'
 
 const ApplyJob = () => {
   const { id } = useParams()
-  const { jobs } = useContext(AppContext)
+  const { jobs, backendUrl } = useContext(AppContext)
   const [jobData, setJobData] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
-  const fetchJob = useCallback(() => {
-    try {
-      setLoading(true)
-      const foundJob = jobs.find(job => job._id === id)
+  const fetchJob = async () => {
 
-      if (foundJob) {
-        setJobData(foundJob)
-        console.log(foundJob)
-      } else {
-        setError('Job not found')
-      }
-    } catch (err) {
-      setError(err.message)
-    } finally {
-      setLoading(false)
+    try {
+      const {data} = await axios.get(backendUrl+`api/jobs/${id}`)
+
+    if (data.success) {
+      setJobData(data.job)
+    } else {
+      toast.error(data.message)
     }
-  }, [id, jobs])
+    } catch (error) {
+      toast.error(error.message)
+    }
+
+    
+
+  }
 
   useEffect(() => {
-    if (jobs.length > 0) {
+    
       fetchJob()
-    }
-  }, [fetchJob, jobs])
+    
+  }, [id])
 
-  if (loading) return <div>Loading job details...</div>
+  
   if (error) return <div>Error: {error}</div>
   if (!jobData) return <div>No job found with ID: {id}</div>
 

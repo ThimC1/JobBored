@@ -1,6 +1,7 @@
-import JobApplication from "../models/JobApplication"
+import JobApplication from "../models/JobApplication.js"
 import {v2 as cloudinary} from "cloudinary"
 import User from "../models/User.js"
+import upload from "../config/multer.js"
 
 //Get user data
 export const getUserData = async (req, res) => {
