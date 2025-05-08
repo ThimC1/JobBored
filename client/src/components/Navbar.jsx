@@ -14,11 +14,11 @@ const Navbar = () => {
 
   return (
     <div className='shadow py-4'>
-      <div className='container px-4 2xl:px-20 mx-auto flex justify-between items-center'>
+      <div className='ml-2 rounded-sm container px-4 2xl:px-20 mx-auto flex justify-between items-center'>
         <img 
           onClick={() => navigate('/')} 
           className='cursor-pointer' 
-          src={assets.logo} 
+          src={assets.logo2} 
           alt="logo" 
         />
         {
@@ -34,7 +34,7 @@ const Navbar = () => {
                   onClick={() => setShowRecruiterLogin(true)} 
                   className='text-gray-600'
                 >
-                  Recruiter Login
+                  JobSeeker Login
                 </button>
                 <button 
                   onClick={openSignIn} 

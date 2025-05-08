@@ -37,22 +37,30 @@ const ManageJobs = () => {
 
     }
     // Function to change Job Visibility
-    const changeJobVisiblity = async (id)=>{
+    const changeJobVisiblity = async (id) => {
         try {
-
-            const {data}= await axios.post(backendUrl+ 'api/company/change-visibility',
+            // Optimistically update the UI
+            setJobs(prevJobs => 
+                prevJobs.map(job => 
+                    job._id === id ? {...job, visible: !job.visible} : job
+                )
+            );
+    
+            const {data} = await axios.post(
+                backendUrl + 'api/company/change-visibility',
                 { id },
-                { headers: { token: companytoken} }
-            )
-            if (data.success) {
-                toast.success(data.message)
-                fetchCompanyJobs()
-            }else{
-                toast.error(data.message)
+                { headers: { token: companytoken } }
+            );
+    
+            if (!data.success) {
+                // Revert if API call fails
+                toast.error(data.message);
+                fetchCompanyJobs(); // Refetch to sync with server
             }
             
         } catch (error) {
-            toast.error(error.message)
+            toast.error(error.message);
+            fetchCompanyJobs(); // Refetch to sync with server
         }
     }
 
@@ -85,7 +93,7 @@ const ManageJobs = () => {
                             <td className='py-2 px-4 border-b max-sm:hidden'>{moment(job.date).format('ll')}</td>
                             <td className='py-2 px-4 border-b max-sm:hidden'>{job.location}</td>
                             <td className='py-2 px-4 border-b text-center'>{job.applicants}</td>
-                            <td className='py-2 px-4 border-b'><input onChange={()=>changeJobVisiblity(job._id)} className='scale-125 ml-4' type="checkbox" checked={job.visible} /></td>
+                            <td className='py-2 px-4 border-b'><input checked={job.visible} onChange={()=>changeJobVisiblity(job._id)} className='scale-125 ml-4' type="checkbox"  /></td>
                         </tr>
                     ))}
                 </tbody>

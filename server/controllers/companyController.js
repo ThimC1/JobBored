@@ -81,7 +81,7 @@ export const loginCompany = async (req, res) => {
 // Get company data
 export const getCompanyData = async (req, res) => { 
 
-    const company = req.company
+   
 
     try {
 
@@ -152,25 +152,33 @@ export const getPostedJobs = async (req, res) => {
 //Change Job Application Status
 export const changeJobApplicationsStatus = async (req, res) => {   }
 
-//Change Job Visibility
+// Change Job Visibility
 export const ChangeJobVisibility = async (req, res) => {  
     try {
-        const {id} = req.body
+        const { id } = req.body;
+        const companyId = req.company._id;
+
+        const job = await Job.findById(id);
         
-        const companyId = req.company._id
-
-        const job = await Job.findById(id)
-        if (companyId.toString() !== job.companyId.toString()) {
-            job.visible = !job.visible
-           
+        // Check if job exists and belongs to the company
+        if (!job) {
+            return res.status(404).json({ success: false, message: "Job not found" });
         }
-        await job.save()
 
-        res.json({success:true, job})
+        if (companyId.toString() !== job.companyId.toString()) {
+            return res.status(403).json({ 
+                success: false, 
+                message: "Unauthorized - You can only change visibility of your own jobs" 
+            });
+        }
+
+        // Toggle visibility
+        job.visible = !job.visible;
+        await job.save();
+
+        res.json({ success: true, job });
 
     } catch (error) {
-
-        res.json({success:false, message: error.message });
-        
+        res.status(500).json({ success: false, message: error.message });
     }
- }
+}

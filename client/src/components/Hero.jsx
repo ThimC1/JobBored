@@ -24,12 +24,9 @@ const Hero = () => {
 
 return (
     <div className='container 2xl:px-20 mx-auto my-10'>
-            <div className='bg-gradient-to-r from-purple-800 to-purple-950 text-white py-16 text-center mx-2 rounded-xl'>
-                    <h2 className='text-2xl md:text-3xl lg:text-4xl font-medium mb-4'>Over 10,000+ jobs to apply</h2>
-                    <p className='mb-8 max-w-xl mx-auto text-sm font-light px-5'>Lorem, ipsum dolor sit amet consectetur adipisicing elit.
-                             Nam laudantium alias sapiente, sint sunt tempora delectus
-                                adipisci placeat temporibus minima voluptatibus earum!
-                                 Possimus tempore nihil totam similique magni dolores numquam!
+            <div className='bg-black text-white py-16 text-center mx-2 rounded-xl'>
+                    <h2 className='text-2xl md:text-3xl lg:text-4xl font-medium mb-4'>Find Skilled Help Near You – Instantly and Reliably</h2>
+                    <p className='mb-8 max-w-xl mx-auto text-sm font-light px-5'>Whether you're a skilled worker looking for local job opportunities or a client in need of quick, reliable help — our platform connects the right people at the right time. Skilled individuals can register and start receiving contract offers based on their location and expertise.
                     </p>
                     <div className='flex items-center justify-between bg-white rounded text-gray-600 max-w-xl pl-4 mx-4 sm:mx-auto '>
                             <div className='flex items-center'>

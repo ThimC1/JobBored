@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState, useCallback } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { AppContext } from '../context/AppContext'
 import Loading from '../components/Loading'
@@ -15,7 +15,6 @@ const ApplyJob = () => {
   const { id } = useParams()
   const { jobs, backendUrl } = useContext(AppContext)
   const [jobData, setJobData] = useState(null)
-  const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
   const fetchJob = async () => {
