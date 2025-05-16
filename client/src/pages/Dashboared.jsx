@@ -28,7 +28,7 @@ const Dashboared = () => {
         {/* NavBar for recruiter panel */}
         <div className='shadow py-4'>
             <div className='px-5 flex justify-between items-center'>
-                <img onClick={ e => navigate('/')} className='max-sm:w-32 cursor-pointer' src={assets.logo} alt="" />
+                <img onClick={ e => navigate('/')} className='max-sm:w-32 cursor-pointer' src={assets.logo2} alt="" />
                 {companyData && (<div className='flex items-center gap-4'>
                     <p className='max-sm:hidden'>Welcome! {companyData.name}</p>
                     <div className='relative group'>
