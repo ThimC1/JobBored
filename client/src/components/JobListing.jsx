@@ -1,16 +1,16 @@
-import React, { useContext, useEffect, useMemo } from 'react'
+import React, { useContext, useMemo } from 'react'
 import { AppContext } from '../context/AppContext'
 import { assets, JobCategories, JobLocations } from '../assets/assets'
 import JobCard from './JobCard'
+import Loading from './Loading'
 
 const JobListing = () => {
-    const { isSearched, searchFilter, setSearchFilter, jobs } = useContext(AppContext)
+    const { isSearched, searchFilter, setSearchFilter, jobs, isLoading } = useContext(AppContext)
     const [showFilter, setShowFilter] = React.useState(false)
     const [currentPage, setCurrentPage] = React.useState(1)
     const [selectedCategory, setSelectedCategory] = React.useState([])
     const [selectedLocation, setSelectedLocation] = React.useState([])
 
-    const filteredJobs = useMemo(() => {
         const matchesCategory = job => 
             selectedCategory.length === 0 || selectedCategory.includes(job.category)
         
@@ -61,6 +61,8 @@ const JobListing = () => {
         (currentPage - 1) * jobsPerPage,
         currentPage * jobsPerPage
     )
+
+    if (isLoading) return <Loading />
 
     return (
         <div className='container 2xl:px-20 mx-auto flex flex-col lg:flex-row max-lg:space-y-8 py-8'>
@@ -148,8 +150,8 @@ const JobListing = () => {
                 {paginatedJobs.length > 0 ? (
                     <>
                         <div className='grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4'>
-                            {paginatedJobs.map((job, index) => (
-                                <JobCard key={`${job.id}-${index}`} job={job} />
+                            {paginatedJobs.map((job) => (
+                                <JobCard key={job._id} job={job} />
                             ))}
                         </div>
                         

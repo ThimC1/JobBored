@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -182,26 +181,21 @@ const JobSeekerLoginModal = () => {
                 const { data } = await axios.post(`${backendUrl}api/skillers/login`, { email, password });
 
                 if (data.success) {
-                    // Check if setJobSeekerData is a function before calling it
                     if (typeof setJobSeekerData === 'function') {
-                        setJobSeekerData(data.jobseeker);
+                        setJobSeekerData(data.skiller);
                     } else {
                         console.error('setJobSeekerData is not a function', setJobSeekerData);
-                        // Alternative approach if context is not working
-                        localStorage.setItem('jobSeekerData', JSON.stringify(data.jobseeker));
+                        localStorage.setItem('jobSeekerData', JSON.stringify(data.skiller));
                     }
                     
-                    // Same safety check for token setter
                     if (typeof setJobSeekerToken === 'function') {
                         setJobSeekerToken(data.token);
                     } else {
                         console.error('setJobSeekerToken is not a function', setJobSeekerToken);
                     }
                     
-                    // Always save to localStorage as backup
                     localStorage.setItem('jobSeekerToken', data.token);
                     
-                    // Close modal
                     if (typeof setShowJobSeekerLogin === 'function') {
                         setShowJobSeekerLogin(false);
                     } else {
@@ -227,7 +221,7 @@ const JobSeekerLoginModal = () => {
                     city,
                     province
                 }));
-                formData.append('skills', skills);
+                formData.append('skills', JSON.stringify(skills)); // Convert skills array to JSON string
                 formData.append('availability', JSON.stringify({
                     days: availableDays,
                     timeSlots: availableTimeSlots
@@ -238,31 +232,32 @@ const JobSeekerLoginModal = () => {
                 formData.append('FullRate', fullRate);
                 formData.append('password', password);
                 
-                if (image) formData.append('profilePicture', image);
+                if (image) {
+                    formData.append('profilePicture', image);
+                }
 
-                const { data } = await axios.post(`${backendUrl}api/skillers/register`, formData);
+                const { data } = await axios.post(`${backendUrl}api/skillers/register`, formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                });
 
                 if (data.success) {
-                    // Check if setJobSeekerData is a function before calling it
                     if (typeof setJobSeekerData === 'function') {
-                        setJobSeekerData(data.jobseeker);
+                        setJobSeekerData(data.skiller);
                     } else {
                         console.error('setJobSeekerData is not a function', setJobSeekerData);
-                        // Alternative approach if context is not working
-                        localStorage.setItem('jobSeekerData', JSON.stringify(data.jobseeker));
+                        localStorage.setItem('jobSeekerData', JSON.stringify(data.skiller));
                     }
                     
-                    // Same safety check for token setter
                     if (typeof setJobSeekerToken === 'function') {
                         setJobSeekerToken(data.token);
                     } else {
                         console.error('setJobSeekerToken is not a function', setJobSeekerToken);
                     }
                     
-                    // Always save to localStorage as backup
                     localStorage.setItem('jobSeekerToken', data.token);
                     
-                    // Close modal
                     if (typeof setShowJobSeekerLogin === 'function') {
                         setShowJobSeekerLogin(false);
                     } else {

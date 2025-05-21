@@ -3,8 +3,9 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import fs from "fs";
 import path from "path";
+import cloudinary from "cloudinary";
 
-// Register a new Skiller
+// Register a new Skiller and create a Job
 export const registerSkiller = async (req, res) => {
     const { firstName, lastName, dateOfBirth, gender, phoneNumber, email, nic, address, skills, availability, radius, hourlyRate, DayRate, FullRate, password } = req.body;
     const imageFile = req.file;
@@ -22,11 +23,14 @@ export const registerSkiller = async (req, res) => {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
-        // Read and store profile picture as binary data
-        const profilePicture = {
-            data: fs.readFileSync(path.join("uploads", imageFile.filename)),
-            contentType: imageFile.mimetype
-        };
+        // Upload profile picture to Cloudinary
+        const profilePictureUpload = await cloudinary.uploader.upload(imageFile.path, {
+            folder: 'skillers',
+            resource_type: 'auto'
+        });
+
+        // Parse skills from JSON string
+        const parsedSkills = JSON.parse(skills);
 
         const skiller = await Skiller.create({
             firstName,
@@ -36,16 +40,33 @@ export const registerSkiller = async (req, res) => {
             phoneNumber,
             email,
             nic,
-            address,
-            profilePicture,
-            skills,
-            availability,
+            address: JSON.parse(address),
+            profilePicture: profilePictureUpload.secure_url,
+            skills: parsedSkills,
+            availability: JSON.parse(availability),
             radius,
             hourlyRate,
             DayRate,
             FullRate,
             password: hashedPassword,
         });
+
+        // 2. Create a Job post for the new Skiller
+        const job = await Job.create({
+            title: `Service by ${firstName} ${lastName}`,
+            description: `Auto-created job post for ${firstName} ${lastName}.`,
+            skillsRequired: parsedSkills,
+            postedBy: skiller._id, // or whatever field links Job to Skiller
+            hourlyRate,
+            DayRate,
+            FullRate,
+            location: JSON.parse(address), // or adapt as needed
+            availability: JSON.parse(availability),
+            // Add more fields as per your Job model
+        });
+
+        // Delete the temporary file after upload
+        fs.unlinkSync(imageFile.path);
 
         res.json({
             success: true,
@@ -56,10 +77,19 @@ export const registerSkiller = async (req, res) => {
                 phoneNumber: skiller.phoneNumber,
                 email: skiller.email,
             },
+            job: {
+                _id: job._id,
+                title: job.title,
+                skillsRequired: job.skillsRequired,
+            },
             token: generateToken(skiller._id),
         });
 
     } catch (error) {
+        // Delete the temporary file if it exists and there's an error
+        if (imageFile && imageFile.path) {
+            fs.unlinkSync(imageFile.path);
+        }
         res.json({ success: false, message: error.message });
     }
 };

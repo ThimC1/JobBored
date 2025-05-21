@@ -98,13 +98,12 @@ export const getCompanyData = async (req, res) => {
 //Post a new job
 export const postJob = async (req, res) => { 
 
-    const { title, description,location, salary, level,category} = req.body;
+    const { title, description, location, salary, level, category } = req.body;
 
     const companyId = req.company._id;
 
     try {
-
-        const newJOb =  new Job({
+        const newJob = new Job({
             title,
             description,
             location,
@@ -112,17 +111,17 @@ export const postJob = async (req, res) => {
             companyId,
             date: Date.now(),
             level,
-            category
-        })
+            category,
+            visible: true // Explicitly set visible to true
+        });
 
-        await newJOb.save()
-        res.json({success:true,newJOb})
+        await newJob.save();
+        res.json({ success: true, newJob });
         
     } catch (error) {
-        res.json({success:false, message: error.message });
+        res.json({ success: false, message: error.message });
     }
-     
-  }
+}
 
 //Get Company JOb applicants
 export const getJobApplicants = async (req, res) => {   }

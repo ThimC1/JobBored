@@ -5,6 +5,7 @@ import { JobCategories, JobLocations } from '../assets/assets'
 import axios from 'axios'
 import { AppContext } from '../context/AppContext'
 import { toast } from 'react-toastify'
+import { useNavigate } from 'react-router-dom'
 
 const AddJob = () => {
     const [title, setTitle] = React.useState('')
@@ -16,13 +17,13 @@ const AddJob = () => {
     const editorRef = React.useRef(null)
     const quillRef = React.useRef(null)
 
-    const { backendUrl, companytoken } = useContext(AppContext)
+    const { backendUrl, companytoken, setJobs } = useContext(AppContext)
+    const navigate = useNavigate()
 
     const onSubmitHandler = async (e) => {
         e.preventDefault()
 
         try {
-
             const description = quillRef.current.root.innerHTML
 
             const { data } = await axios.post(backendUrl+ 'api/company/post-job',
@@ -35,16 +36,23 @@ const AddJob = () => {
                 setTitle('')
                 setSalary(0)
                 quillRef.current.root.innerHTML = ""
-                console.log('Job Added Succesfully')
+                
+                // Refresh jobs list
+                const jobsResponse = await axios.get(backendUrl+'api/jobs')
+                if (jobsResponse.data.success) {
+                    setJobs(jobsResponse.data.jobs)
+                    // Navigate to manage jobs page to see the new job
+                    navigate('/dashboard/manage-job')
+                }
+                
+                console.log('Job Added Successfully')
             }else{
                 toast.error(data.message)
             }
-
             
         } catch (error) {
             toast.error(error.message)
         }
-
     }
 
     useEffect(() => {
