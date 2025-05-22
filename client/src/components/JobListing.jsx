@@ -11,6 +11,7 @@ const JobListing = () => {
     const [selectedCategory, setSelectedCategory] = React.useState([])
     const [selectedLocation, setSelectedLocation] = React.useState([])
 
+    const filteredJobs = useMemo(() => {
         const matchesCategory = job => 
             selectedCategory.length === 0 || selectedCategory.includes(job.category)
         
